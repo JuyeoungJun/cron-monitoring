@@ -1,0 +1,6 @@
+gabia/cronMonitoring/CronMonitoringApplicationTests.java
+ gabia.cronMonitoring.CronMonitoringApplicationTests
+gabia/cronMonitoring/repository/MySQLTest.java
+ gabia.cronMonitoring.repository.MySQLTest
+gabia/cronMonitoring/repository/MemberRepositoryTest.java
+ gabia.cronMonitoring.repository.MemberRepositoryTest

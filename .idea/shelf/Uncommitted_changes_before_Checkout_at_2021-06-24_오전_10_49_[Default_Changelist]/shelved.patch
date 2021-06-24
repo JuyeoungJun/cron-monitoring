@@ -1,0 +1,632 @@
+Index: src/main/java/gabia/cronMonitoring/repository/UserRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.repository;\r\n\r\npublic interface UserRepository {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/repository/UserRepository.java b/src/main/java/gabia/cronMonitoring/repository/UserRepository.java
+--- a/src/main/java/gabia/cronMonitoring/repository/UserRepository.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/repository/UserRepository.java	(date 1624425867451)
+@@ -1,5 +1,8 @@
+ package gabia.cronMonitoring.repository;
+ 
+-public interface UserRepository {
++import gabia.cronMonitoring.entity.User;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface UserRepository extends JpaRepository<User, Long> {
+ 
+ }
+Index: src/main/java/gabia/cronMonitoring/repository/UserCronJobRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.repository;\r\n\r\npublic interface UserCronJobRepository {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/repository/UserCronJobRepository.java b/src/main/java/gabia/cronMonitoring/repository/UserCronJobRepository.java
+--- a/src/main/java/gabia/cronMonitoring/repository/UserCronJobRepository.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/repository/UserCronJobRepository.java	(date 1624497832485)
+@@ -1,5 +1,11 @@
+ package gabia.cronMonitoring.repository;
+ 
+-public interface UserCronJobRepository {
++import gabia.cronMonitoring.entity.UserCronJob;
++import java.util.List;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface UserCronJobRepository extends JpaRepository<UserCronJob, Long> {
++
++    List<UserCronJob> findByUserAccount(String account);
+ 
+ }
+Index: src/main/java/gabia/cronMonitoring/entity/UserCronJob.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.entity;\r\n\r\nimport javax.persistence.Entity;\r\nimport javax.persistence.FetchType;\r\nimport javax.persistence.GeneratedValue;\r\nimport javax.persistence.GenerationType;\r\nimport javax.persistence.Id;\r\nimport javax.persistence.Inheritance;\r\nimport javax.persistence.JoinColumn;\r\nimport javax.persistence.ManyToOne;\r\nimport javax.persistence.Table;\r\nimport lombok.Getter;\r\nimport lombok.Setter;\r\n\r\n@Entity\r\n@Getter\r\n@Setter\r\n@Table(name = \"user_cron_job\")\r\npublic class UserCronJob {\r\n\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Long id;\r\n\r\n    @ManyToOne(fetch = FetchType.LAZY)\r\n    @JoinColumn(name = \"user_id\")\r\n    private User user;\r\n\r\n    @ManyToOne(fetch = FetchType.LAZY)\r\n    @JoinColumn(name = \"cron_job_id\")\r\n    private CronJob cronJob;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/entity/UserCronJob.java b/src/main/java/gabia/cronMonitoring/entity/UserCronJob.java
+--- a/src/main/java/gabia/cronMonitoring/entity/UserCronJob.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/entity/UserCronJob.java	(date 1624495761404)
+@@ -1,5 +1,7 @@
+ package gabia.cronMonitoring.entity;
+ 
++import java.io.Serializable;
++import javax.persistence.Column;
+ import javax.persistence.Entity;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+@@ -9,24 +11,32 @@
+ import javax.persistence.JoinColumn;
+ import javax.persistence.ManyToOne;
+ import javax.persistence.Table;
++import lombok.AllArgsConstructor;
++import lombok.Builder;
+ import lombok.Getter;
++import lombok.NoArgsConstructor;
+ import lombok.Setter;
+ 
+ @Entity
+ @Getter
+-@Setter
++@Builder
++@AllArgsConstructor
++@NoArgsConstructor
+ @Table(name = "user_cron_job")
+-public class UserCronJob {
++public class UserCronJob implements Serializable {
+ 
+     @Id
++    @Column(name = "id")
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private Long id;
+ 
+     @ManyToOne(fetch = FetchType.LAZY)
+-    @JoinColumn(name = "user_id")
++    @JoinColumn(name = "account", referencedColumnName = "account")
+     private User user;
+ 
+     @ManyToOne(fetch = FetchType.LAZY)
+-    @JoinColumn(name = "cron_job_id")
++    @JoinColumn(name = "cron_job_id", referencedColumnName = "cron_job_id")
+     private CronJob cronJob;
++
++//    @JoinColumn(name = "server_ip", referencedColumnName = "server_ip")
+ }
+Index: src/main/java/gabia/cronMonitoring/entity/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.entity;\r\n\r\nimport javax.persistence.Column;\r\nimport javax.persistence.Entity;\r\nimport javax.persistence.GeneratedValue;\r\nimport javax.persistence.GenerationType;\r\nimport javax.persistence.Id;\r\nimport javax.persistence.Table;\r\nimport javax.validation.constraints.NotNull;\r\nimport lombok.Getter;\r\nimport lombok.Setter;\r\n\r\n@Entity\r\n@Getter\r\n@Setter\r\n@Table(name = \"user\")\r\npublic class User {\r\n\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Long id;\r\n\r\n    @Column(name = \"user_id\")\r\n    @NotNull\r\n    private String userId;\r\n\r\n    @Column(name = \"name\")\r\n    @NotNull\r\n    private String name;\r\n\r\n    @Column(name = \"email\")\r\n    @NotNull\r\n    private String email;\r\n\r\n    @Column(name = \"password\")\r\n    @NotNull\r\n    private String password;\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/entity/User.java b/src/main/java/gabia/cronMonitoring/entity/User.java
+--- a/src/main/java/gabia/cronMonitoring/entity/User.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/entity/User.java	(date 1624495837482)
+@@ -17,12 +17,13 @@
+ public class User {
+ 
+     @Id
++    @Column(name="user_id")
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private Long id;
+ 
+-    @Column(name = "user_id")
++    @Column(name = "account")
+     @NotNull
+-    private String userId;
++    private String account;
+ 
+     @Column(name = "name")
+     @NotNull
+Index: src/main/java/gabia/cronMonitoring/initTest/Member.java
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/initTest/Member.java b/src/main/java/gabia/cronMonitoring/initTest/Member.java
+deleted file mode 100644
+--- a/src/main/java/gabia/cronMonitoring/initTest/Member.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ /dev/null	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
+@@ -1,19 +0,0 @@
+-package gabia.cronMonitoring.initTest;
+-
+-import lombok.Getter;
+-import lombok.Setter;
+-
+-import javax.persistence.Entity;
+-import javax.persistence.GeneratedValue;
+-import javax.persistence.Id;
+-
+-@Entity
+-@Getter
+-@Setter
+-public class Member {
+-
+-    @Id
+-    @GeneratedValue
+-    private Long id;
+-    private String username;
+-}
+Index: src/test/java/gabia/cronMonitoring/repository/MySQLTest.java
+===================================================================
+diff --git a/src/test/java/gabia/cronMonitoring/repository/MySQLTest.java b/src/test/java/gabia/cronMonitoring/repository/MySQLTest.java
+deleted file mode 100644
+--- a/src/test/java/gabia/cronMonitoring/repository/MySQLTest.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ /dev/null	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
+@@ -1,56 +0,0 @@
+-package gabia.cronMonitoring.repository;
+-
+-import gabia.cronMonitoring.initTest.Member;
+-import gabia.cronMonitoring.initTest.MemberRepository;
+-import org.assertj.core.api.Assertions;
+-import org.junit.Test;
+-import org.junit.runner.RunWith;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.boot.test.context.SpringBootTest;
+-import org.springframework.test.context.junit4.SpringRunner;
+-import org.springframework.transaction.annotation.Transactional;
+-
+-@RunWith(SpringRunner.class)
+-@SpringBootTest
+-public class MySQLTest {
+-
+-    @Autowired
+-    MemberRepository memberRepository;
+-
+-    //MySQL 접속 Test 및 Jpa Test
+-    @Test
+-    @Transactional
+-    public void testMember() throws Exception {
+-        //given
+-        Member member = new Member();
+-        Member member2 = new Member();
+-        Member member3 = new Member();
+-
+-        member.setUsername("MySQL Test");
+-        member2.setUsername("MySQL Test2");
+-        member3.setUsername("MySQL Test3");
+-
+-        //when
+-        Long saveId = memberRepository.save(member);
+-        Long saveId2 = memberRepository.save(member2);
+-        Long saveId3 = memberRepository.save(member3);
+-
+-        Member findMember = memberRepository.find(saveId);
+-        Member findMember2 = memberRepository.find(saveId2);
+-        Member findMember3 = memberRepository.find(saveId3);
+-
+-        //then
+-        Assertions.assertThat(findMember.getId()).isEqualTo(saveId);
+-        Assertions.assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
+-        Assertions.assertThat((findMember)).isEqualTo(member);
+-
+-        Assertions.assertThat(findMember2.getId()).isEqualTo(saveId2);
+-        Assertions.assertThat(findMember2.getUsername()).isEqualTo(member2.getUsername());
+-        Assertions.assertThat((findMember2)).isEqualTo(member2);
+-
+-        Assertions.assertThat(findMember3.getId()).isEqualTo(saveId3);
+-        Assertions.assertThat(findMember3.getUsername()).isEqualTo(member3.getUsername());
+-        Assertions.assertThat((findMember3)).isEqualTo(member3);
+-    }
+-
+-}
+\ No newline at end of file
+Index: src/main/java/gabia/cronMonitoring/initTest/MemberRepository.java
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/initTest/MemberRepository.java b/src/main/java/gabia/cronMonitoring/initTest/MemberRepository.java
+deleted file mode 100644
+--- a/src/main/java/gabia/cronMonitoring/initTest/MemberRepository.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ /dev/null	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
+@@ -1,23 +0,0 @@
+-package gabia.cronMonitoring.initTest;
+-
+-import org.springframework.stereotype.Repository;
+-
+-import javax.persistence.EntityManager;
+-import javax.persistence.PersistenceContext;
+-
+-@Repository
+-public class MemberRepository {
+-
+-    @PersistenceContext
+-    private EntityManager em;
+-
+-    //리턴값은 거의 안만드는 대신 아이디 정도 있는 수준으로 만든다
+-    public Long save(Member member) {
+-        em.persist(member);
+-        return member.getId();
+-    }
+-
+-    public Member find(Long id) {
+-        return em.find(Member.class, id);
+-    }
+-}
+Index: src/test/java/gabia/cronMonitoring/repository/MemberRepositoryTest.java
+===================================================================
+diff --git a/src/test/java/gabia/cronMonitoring/repository/MemberRepositoryTest.java b/src/test/java/gabia/cronMonitoring/repository/MemberRepositoryTest.java
+deleted file mode 100644
+--- a/src/test/java/gabia/cronMonitoring/repository/MemberRepositoryTest.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ /dev/null	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
+@@ -1,41 +0,0 @@
+-package gabia.cronMonitoring.repository;
+-
+-import gabia.cronMonitoring.initTest.Member;
+-import gabia.cronMonitoring.initTest.MemberRepository;
+-import org.assertj.core.api.Assertions;
+-import org.junit.Test;
+-import org.junit.runner.RunWith;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.boot.test.context.SpringBootTest;
+-import org.springframework.test.annotation.Rollback;
+-import org.springframework.test.context.junit4.SpringRunner;
+-import org.springframework.transaction.annotation.Transactional;
+-
+-@RunWith(SpringRunner.class)
+-@SpringBootTest
+-public class MemberRepositoryTest {
+-
+-    @Autowired
+-    MemberRepository memberRepository;
+-
+-    @Test
+-    @Transactional //이 트랜잭셔널이 테스트 밑에있으면 데이터를 롤백해버린다. 하기싫으면 @Rollback(false)
+-    @Rollback(false) //이거 안해두면 인서트 쿼리 안나옴
+-    public void testMember() {
+-        //given
+-        Member member = new Member();
+-        member.setUsername("memberA");
+-
+-        //when
+-        Long saveId = memberRepository.save(member);
+-        Member findMember = memberRepository.find(saveId);
+-
+-        //then
+-        Assertions.assertThat(findMember.getId()).isEqualTo(saveId);
+-        Assertions.assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
+-        // 중요, 아래가 당연히 틀릴것으로 예상하지만 맞음
+-        // 왜냐면 같은 영속성 컨텍스트 속성 안에서 아이디가 같으면 같은 엔티티로 판별한다.-> 기본편을 쭉 들어야한다. 중요한부분인듯.
+-        Assertions.assertThat((findMember)).isEqualTo(member);
+-    }
+-
+-}
+\ No newline at end of file
+Index: src/main/java/gabia/cronMonitoring/initTest/Hello.java
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/initTest/Hello.java b/src/main/java/gabia/cronMonitoring/initTest/Hello.java
+deleted file mode 100644
+--- a/src/main/java/gabia/cronMonitoring/initTest/Hello.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ /dev/null	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
+@@ -1,11 +0,0 @@
+-package gabia.cronMonitoring.initTest;
+-
+-import lombok.Getter;
+-import lombok.Setter;
+-
+-@Getter
+-@Setter
+-public class Hello {
+-
+-    private String date;
+-}
+Index: src/main/java/gabia/cronMonitoring/entity/TeamCronJob.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.entity;\r\n\r\nimport javax.persistence.Entity;\r\nimport javax.persistence.FetchType;\r\nimport javax.persistence.GeneratedValue;\r\nimport javax.persistence.GenerationType;\r\nimport javax.persistence.Id;\r\nimport javax.persistence.JoinColumn;\r\nimport javax.persistence.ManyToOne;\r\nimport javax.persistence.Table;\r\nimport lombok.Getter;\r\nimport lombok.Setter;\r\n\r\n@Entity\r\n@Getter\r\n@Setter\r\n@Table(name = \"team_cron_job\")\r\npublic class TeamCronJob {\r\n\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Long id;\r\n\r\n    @ManyToOne(fetch = FetchType.LAZY)\r\n    @JoinColumn(name = \"team_id\")\r\n    private Team team;\r\n\r\n    @ManyToOne(fetch = FetchType.LAZY)\r\n    @JoinColumn(name = \"cron_job_id\")\r\n    private CronJob cronJob;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/entity/TeamCronJob.java b/src/main/java/gabia/cronMonitoring/entity/TeamCronJob.java
+--- a/src/main/java/gabia/cronMonitoring/entity/TeamCronJob.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/entity/TeamCronJob.java	(date 1624493887754)
+@@ -1,5 +1,6 @@
+ package gabia.cronMonitoring.entity;
+ 
++import javax.persistence.Column;
+ import javax.persistence.Entity;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+@@ -18,6 +19,7 @@
+ public class TeamCronJob {
+ 
+     @Id
++    @Column(name = "id")
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private Long id;
+ 
+Index: src/main/java/gabia/cronMonitoring/dto/UserCronJobDTO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/dto/UserCronJobDTO.java b/src/main/java/gabia/cronMonitoring/dto/UserCronJobDTO.java
+new file mode 100644
+--- /dev/null	(date 1624495534124)
++++ b/src/main/java/gabia/cronMonitoring/dto/UserCronJobDTO.java	(date 1624495534124)
+@@ -0,0 +1,51 @@
++package gabia.cronMonitoring.dto;
++
++import gabia.cronMonitoring.entity.UserCronJob;
++import java.util.UUID;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
++public class UserCronJobDTO {
++
++    @Getter
++    @Setter
++    @AllArgsConstructor
++    @NoArgsConstructor
++    public static class Request {
++
++        UUID cronJobId;
++    }
++
++    @Getter
++    @Setter
++    @AllArgsConstructor
++    @NoArgsConstructor
++    public static class Response {
++
++        UUID cronJobId;
++        String UserId;
++
++        public static UserCronJobDTO.Response from(UserCronJob userCronJob) {
++            return new UserCronJobDTO.Response(userCronJob.getCronJob().getId(),
++                userCronJob.getUser().getAccount());
++        }
++    }
++
++    @Getter
++    @Setter
++    @AllArgsConstructor
++    public static class ErrorResponse {
++
++        String errorMsg;
++        String errorCode;
++
++        public ErrorResponse(String errorMsg) {
++            this.errorMsg = errorMsg;
++            this.errorCode = "404";
++        }
++    }
++
++
++}
+Index: src/main/java/gabia/cronMonitoring/service/UserCronJobService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/service/UserCronJobService.java b/src/main/java/gabia/cronMonitoring/service/UserCronJobService.java
+new file mode 100644
+--- /dev/null	(date 1624498899401)
++++ b/src/main/java/gabia/cronMonitoring/service/UserCronJobService.java	(date 1624498899401)
+@@ -0,0 +1,33 @@
++package gabia.cronMonitoring.service;
++
++import gabia.cronMonitoring.dto.UserCronJobDTO;
++import gabia.cronMonitoring.dto.UserCronJobDTO.Response;
++import gabia.cronMonitoring.entity.UserCronJob;
++import gabia.cronMonitoring.repository.CronJobRepositoryDataJpa;
++import gabia.cronMonitoring.repository.UserCronJobRepository;
++import java.util.List;
++import java.util.stream.Collectors;
++import lombok.AllArgsConstructor;
++import org.springframework.stereotype.Service;
++import org.springframework.transaction.annotation.Transactional;
++
++@Service
++@AllArgsConstructor
++public class UserCronJobService {
++
++//    private final CronJobRepositoryDataJpa cronJobRepository;
++    private final UserCronJobRepository userCronJobRepository;
++
++    public List<Response> findAllUserCronJob(String account) {
++
++        List<UserCronJob> test = userCronJobRepository.findByUserAccount(account);
++        List<UserCronJobDTO.Response> responses = userCronJobRepository.findByUserAccount(account)
++            .stream()
++            .map(dto -> UserCronJobDTO.Response.from(dto))
++            .collect(Collectors.toList());
++
++        return responses;
++
++    }
++
++}
+Index: src/main/java/gabia/cronMonitoring/entity/Team.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gabia.cronMonitoring.entity;\r\n\r\nimport javax.persistence.Column;\r\nimport javax.persistence.Entity;\r\nimport javax.persistence.GeneratedValue;\r\nimport javax.persistence.GenerationType;\r\nimport javax.persistence.Id;\r\nimport javax.persistence.Table;\r\nimport javax.validation.constraints.NotNull;\r\nimport lombok.Getter;\r\nimport lombok.NoArgsConstructor;\r\nimport lombok.Setter;\r\n\r\n@Entity\r\n@Getter\r\n@Setter\r\n@Table(name = \"team\")\r\npublic class Team {\r\n\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Long id;\r\n\r\n    @Column(name = \"team_id\")\r\n    @NotNull\r\n    private String teamId;\r\n\r\n    @Column(name = \"team_name\")\r\n    @NotNull\r\n    private String teamName;\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/entity/Team.java b/src/main/java/gabia/cronMonitoring/entity/Team.java
+--- a/src/main/java/gabia/cronMonitoring/entity/Team.java	(revision 30dfd52185d77b36296b53bc1c6b79e94957ebef)
++++ b/src/main/java/gabia/cronMonitoring/entity/Team.java	(date 1624495156629)
+@@ -18,12 +18,13 @@
+ public class Team {
+ 
+     @Id
++//    @Column(name = "id")
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private Long id;
+ 
+-    @Column(name = "team_id")
++    @Column(name = "team_account")
+     @NotNull
+-    private String teamId;
++    private String teamAccount;
+ 
+     @Column(name = "team_name")
+     @NotNull
+Index: src/main/java/gabia/cronMonitoring/repository/CronJobRepositoryDataJpa.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/repository/CronJobRepositoryDataJpa.java b/src/main/java/gabia/cronMonitoring/repository/CronJobRepositoryDataJpa.java
+new file mode 100644
+--- /dev/null	(date 1624423517473)
++++ b/src/main/java/gabia/cronMonitoring/repository/CronJobRepositoryDataJpa.java	(date 1624423517473)
+@@ -0,0 +1,9 @@
++package gabia.cronMonitoring.repository;
++
++import gabia.cronMonitoring.entity.CronJob;
++import java.util.UUID;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface CronJobRepositoryDataJpa extends JpaRepository<CronJob, UUID> {
++
++}
+Index: src/test/java/gabia/cronMonitoring/service/UserCronJobServiceTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/gabia/cronMonitoring/service/UserCronJobServiceTest.java b/src/test/java/gabia/cronMonitoring/service/UserCronJobServiceTest.java
+new file mode 100644
+--- /dev/null	(date 1624498778335)
++++ b/src/test/java/gabia/cronMonitoring/service/UserCronJobServiceTest.java	(date 1624498778335)
+@@ -0,0 +1,96 @@
++package gabia.cronMonitoring.service;
++
++import static org.junit.Assert.*;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.BDDMockito.given;
++import static org.mockito.MockitoAnnotations.openMocks;
++
++import gabia.cronMonitoring.dto.UserCronJobDTO;
++import gabia.cronMonitoring.entity.CronJob;
++import gabia.cronMonitoring.entity.CronServer;
++import gabia.cronMonitoring.entity.User;
++import gabia.cronMonitoring.entity.UserCronJob;
++import gabia.cronMonitoring.repository.UserCronJobRepository;
++import java.util.LinkedList;
++import java.util.List;
++import java.util.UUID;
++import org.assertj.core.api.Assertions;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.mockito.InjectMocks;
++import org.mockito.Mock;
++import org.mockito.junit.MockitoJUnitRunner;
++
++@RunWith(MockitoJUnitRunner.class)
++public class UserCronJobServiceTest {
++
++    @Mock
++    private UserCronJobRepository userCronJobRepository;
++
++    @InjectMocks
++    private UserCronJobService userCronJobService;
++
++    @Before
++    public void init() {
++        userCronJobService = new UserCronJobService(this.userCronJobRepository);
++    }
++
++    @Test
++    public void findAllUserCronJob() {
++        //given
++        openMocks(this);
++
++        CronServer cronServer = new CronServer("0.0.0.0");
++
++        User user = new User();
++        user.setId(1L);
++        user.setAccount("test");
++        user.setEmail("test");
++        user.setName("test");
++        user.setPassword("test");
++
++        CronJob cronJob = new CronJob();
++        cronJob.setId(UUID.randomUUID());
++        cronJob.setServer(cronServer);
++        cronJob.setCronExpr("test");
++        cronJob.setCronName("test");
++
++        CronJob cronJob2 = new CronJob();
++        cronJob.setId(UUID.randomUUID());
++        cronJob.setServer(cronServer);
++        cronJob.setCronExpr("test2");
++        cronJob.setCronName("test2");
++
++        UserCronJob userCronJob1 = UserCronJob.builder()
++            .user(user)
++            .cronJob(cronJob)
++            .build();
++
++        UserCronJob userCronJob2 = UserCronJob.builder()
++            .user(user)
++            .cronJob(cronJob2)
++            .build();
++
++        List<UserCronJob> userCronJobList = new LinkedList<>();
++
++        UserCronJob savedUserCronJob = userCronJobRepository.save(userCronJob1);
++        UserCronJob savedUserCronJob2 = userCronJobRepository.save(userCronJob2);
++
++        userCronJobList.add(savedUserCronJob);
++        userCronJobList.add(savedUserCronJob2);
++
++        given(userCronJobRepository.findByUserAccount(any()))
++            .willReturn(userCronJobList);
++
++        //when
++        List<UserCronJobDTO.Response> allUserReadAuth = userCronJobService
++            .findAllUserCronJob("test");
++
++        //then
++        Assertions.assertThat(allUserReadAuth.get(0).getUserId()).isEqualTo("test");
++        Assertions.assertThat(allUserReadAuth.get(1).getUserId()).isEqualTo("test2");
++
++    }
++
++}
+\ No newline at end of file
+Index: src/main/java/gabia/cronMonitoring/controller/UserCronJobController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/gabia/cronMonitoring/controller/UserCronJobController.java b/src/main/java/gabia/cronMonitoring/controller/UserCronJobController.java
+new file mode 100644
+--- /dev/null	(date 1624496360515)
++++ b/src/main/java/gabia/cronMonitoring/controller/UserCronJobController.java	(date 1624496360515)
+@@ -0,0 +1,30 @@
++package gabia.cronMonitoring.controller;
++
++import gabia.cronMonitoring.dto.UserCronJobDTO;
++import gabia.cronMonitoring.service.UserCronJobService;
++import java.util.List;
++import javax.websocket.server.PathParam;
++import lombok.AllArgsConstructor;
++import org.springframework.http.HttpStatus;
++import org.springframework.http.ResponseEntity;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RestController;
++
++@AllArgsConstructor
++@RestController
++@RequestMapping(path = "/cron-read-auths/users/{userId}/crons")
++public class UserCronJobController {
++
++    private final UserCronJobService userReadAuthService;
++
++    @GetMapping(path = "/")
++    public ResponseEntity<List<UserCronJobDTO.Response>> getUserReadAuthList(@PathParam(value = "userId") String userId) {
++
++        List<UserCronJobDTO.Response> allUserReadAuth = userReadAuthService.findAllUserCronJob(userId);
++        return new ResponseEntity<>(allUserReadAuth, HttpStatus.OK);
++
++    }
++
++
++}
