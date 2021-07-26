@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 @CrossOrigin(origins = "*")
 public class WebhookController {
 
@@ -34,6 +36,10 @@ public class WebhookController {
         List<WebhookInfoDTO> webhooks = webhookSubscriptionService.getWebhooks(userId, cronJobId);
 
         ResponseEntity responseEntity = new ResponseEntity(webhooks, HttpStatus.OK);
+
+        log.info("Success get webhook subscription list (userId: {}, cronJobId: {})", userId
+            , cronJobId.toString());
+
         return responseEntity;
     }
 
@@ -42,7 +48,11 @@ public class WebhookController {
         @NotEmpty @PathVariable(value = "userId") String userId,
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId,
         @RequestBody @Valid WebhookDTO request) {
-        WebhookInfoDTO webhookInfoDTO = webhookSubscriptionService.addWebhook(userId, cronJobId, request);
+        WebhookInfoDTO webhookInfoDTO = webhookSubscriptionService
+            .addWebhook(userId, cronJobId, request);
+
+        log.info("Success make webhook subscription (userId: {}, cronJobId: {})", userId
+            , cronJobId.toString());
 
         ResponseEntity responseEntity = new ResponseEntity(webhookInfoDTO, HttpStatus.CREATED);
         return responseEntity;
@@ -57,6 +67,9 @@ public class WebhookController {
         WebhookInfoDTO webhookInfoDTO = webhookSubscriptionService
             .updateWebhook(userId, cronJobId, webhookId, request);
 
+        log.info("Success update webhook subscription (userId: {}, cronJobId: {})", userId
+            , cronJobId.toString());
+
         ResponseEntity responseEntity = new ResponseEntity(webhookInfoDTO, HttpStatus.OK);
         return responseEntity;
     }
@@ -68,6 +81,9 @@ public class WebhookController {
         @Valid @PathVariable(value = "webhookId") Long webhookId) {
         webhookSubscriptionService.deleteWebhookById(webhookId);
 
+        log.info("Success delete webhook subscription (userId: {}, cronJobId: {})", userId
+            , cronJobId.toString());
+
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
         return responseEntity;
     }
@@ -77,6 +93,9 @@ public class WebhookController {
         @NotEmpty @PathVariable(value = "userId") String userId,
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId) {
         webhookSubscriptionService.deleteWebhooks(userId, cronJobId);
+
+        log.info("Success delete all webhook subscription (userId: {}, cronJobId: {})", userId
+            , cronJobId.toString());
 
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
         return responseEntity;

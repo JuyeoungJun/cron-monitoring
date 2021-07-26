@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Log4j2
 public class CronServerController {
 
     private final CronServerService cronServerService;
@@ -30,6 +32,9 @@ public class CronServerController {
     public ResponseEntity<List<CronServerDTO>> getCronServers() {
         List<CronServerDTO> cronServers = cronServerService.getCronServers();
         ResponseEntity responseEntity = new ResponseEntity(cronServers, HttpStatus.OK);
+
+        log.info("Success get cron server list");
+
         return responseEntity;
     }
 
@@ -38,6 +43,9 @@ public class CronServerController {
     public ResponseEntity<CronServerDTO> postCronServers(@Valid @RequestBody CronServerDTO dto) {
         CronServerDTO cronServerDTO = cronServerService.addCronServer(dto.getServerIp());
         ResponseEntity responseEntity = new ResponseEntity(cronServerDTO, HttpStatus.CREATED);
+
+        log.info("Success make cron server (serverIp: {})", dto.getServerIp());
+
         return responseEntity;
     }
 
@@ -49,6 +57,9 @@ public class CronServerController {
         CronServerDTO cronServer = cronServerService
             .updateCronServer(serverIp, cronServerDTO.getServerIp());
         ResponseEntity responseEntity = new ResponseEntity(cronServer, HttpStatus.OK);
+
+        log.info("Success update cron server (serverIp: {})", serverIp);
+
         return responseEntity;
     }
 
@@ -57,6 +68,9 @@ public class CronServerController {
     public ResponseEntity deleteCronServer(@Valid @PathVariable(name = "serverIp") String serverIp) {
         cronServerService.deleteCronServer(serverIp);
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
+
+        log.info("Success delete server (serverIp: {})", serverIp);
+
         return responseEntity;
     }
 }

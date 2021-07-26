@@ -10,6 +10,7 @@ import gabia.cronMonitoring.service.UserService;
 import gabia.cronMonitoring.util.jwt.JwtFilter;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
+@Log4j2
 public class AuthController {
 
     private final AuthService authService;
@@ -34,11 +36,14 @@ public class AuthController {
 
         AccessTokenDTO tokenDTO = authService.authenticate(request);
         if (tokenDTO == null) {
+            log.error("Do not find access token: {}", request.getAccount());
             throw new InvalidTokenException("엑세스 토큰이 발급되지 않았습니다.");
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getToken());
+
+        log.info("Login Success: {}", request.getAccount());
 
         return new ResponseEntity(tokenDTO, httpHeaders, HttpStatus.OK);
     }
@@ -46,12 +51,18 @@ public class AuthController {
     @PostMapping("/local/logout")
     public ResponseEntity<String> logout(@Valid @RequestBody UserAuthDTO request) {
         authService.unauthenticate(request.getAccount());
+
+        log.info("Logout Success: {}", request.getAccount());
+
         return new ResponseEntity("Refresh Token Deleted Successfully!", HttpStatus.OK);
     }
 
     @PostMapping("/register")
     public ResponseEntity<AccessTokenDTO> register(@Valid @RequestBody UserAuthDTO request) {
         UserInfoDTO userInfoDTO = userService.addUser(request);
+
+        log.info("Register Success: {}", request.getAccount());
+
         return new ResponseEntity(userInfoDTO, HttpStatus.CREATED);
     }
 
@@ -60,6 +71,9 @@ public class AuthController {
         @Valid @RequestBody RefreshTokenDTO request) {
         AccessTokenDTO accessTokenDTO = authService
             .reissueAccessToken(request.getRefreshToken());
+
+        log.info("Success make refreshToken: {}", request.getRefreshToken());
+
         return new ResponseEntity(accessTokenDTO, HttpStatus.CREATED);
     }
 }
