@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 @CrossOrigin(origins = "*")
 public class NoticeController {
 
@@ -33,6 +35,9 @@ public class NoticeController {
 
         List<NoticeSubscriptionDTO.Response> allTeamCronJob = noticeService
             .findAllNoticeSubscription(userId);
+
+        log.info("Success get notice subscription list (userId: {})", userId);
+
         return new ResponseEntity<>(allTeamCronJob, HttpStatus.OK);
     }
 
@@ -44,6 +49,9 @@ public class NoticeController {
         NoticeSubscriptionDTO.Response response = noticeService
             .addNoticeSubscription(userId, request);
 
+        log.info("Success make notice subscription (userId: {}"
+            + ",cronJobId: {})", userId, request.getCronJobId().toString());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -54,6 +62,8 @@ public class NoticeController {
 
         noticeService.removeNoticeSubscription(userId, cronJobId);
 
+        log.info("Success delete notice subscription (userId: {}, cronJobId)", userId, cronJobId);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -62,6 +72,8 @@ public class NoticeController {
         @NotEmpty @PathVariable(value = "userId") String userId) {
 
         List<Response> allNotice = noticeService.findAllNotice(userId);
+
+        log.info("Success get notice list (userId: {})", userId);
 
         return new ResponseEntity<>(allNotice, HttpStatus.OK);
     }
@@ -73,6 +85,8 @@ public class NoticeController {
 
         Response response = noticeService.selectNotice(userId, notId);
 
+        log.info("Success selecct notice (userId: {}, notId: {})", userId, notId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
@@ -82,6 +96,8 @@ public class NoticeController {
         @RequestBody @Valid NoticeDTO.Request request) {
 
         Response notice = noticeService.createNotice(request);
+
+        log.info("Success make notice (cronJobId: {})", request.getCronJobId());
 
         return new ResponseEntity<>(notice, HttpStatus.OK);
 

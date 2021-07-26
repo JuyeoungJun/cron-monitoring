@@ -6,6 +6,7 @@ import gabia.cronMonitoring.service.UserService;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Log4j2
 @CrossOrigin(origins = "*")
 public class UserController {
 
@@ -31,6 +33,9 @@ public class UserController {
     public ResponseEntity<List<UserInfoDTO>> getUsers() {
         List<UserInfoDTO> users = userService.getUsers();
         ResponseEntity responseEntity = new ResponseEntity(users, HttpStatus.OK);
+
+        log.info("Success get user list");
+
         return responseEntity;
     }
 
@@ -42,6 +47,9 @@ public class UserController {
         request.setAccount(userId);
 
         UserInfoDTO userInfoDTO = userService.getUser(request);
+
+        log.info("Success get user (userId: {})", userId);
+
         ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.OK);
         return responseEntity;
     }
@@ -54,6 +62,9 @@ public class UserController {
         UserInfoDTO userInfoDTO = userService
             .updateUser(userId, request);
         ResponseEntity responseEntity = new ResponseEntity(userInfoDTO, HttpStatus.OK);
+
+        log.info("Success update user (userId: {})", userId);
+
         return responseEntity;
     }
 
@@ -64,6 +75,9 @@ public class UserController {
         request.setAccount(userId);
         userService.deleteUser(request);
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NO_CONTENT);
+
+        log.info("Success get user (userId: {})", userId);
+
         return responseEntity;
     }
 }

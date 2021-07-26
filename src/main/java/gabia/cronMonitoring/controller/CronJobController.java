@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Log4j2
 public class CronJobController {
 
     public final CronJobService cronJobService;
@@ -30,6 +32,9 @@ public class CronJobController {
     @GetMapping(value = "/cron-servers/{serverIp}/cron-jobs")
     public CronJobResult findCronJobByServer(@PathVariable("serverIp") @NotEmpty String serverIp) {
         List<CronJobDTO> cronJobDTOs = cronJobService.readCronJobListByServer(serverIp);
+
+        log.info("Success get cron job list (serverIp: {})", serverIp);
+
         return new CronJobResult(cronJobDTOs);
     }
 
@@ -39,6 +44,10 @@ public class CronJobController {
         @PathVariable("serverIp") @NotEmpty String serverIp) {
         cronJobDTO.setServerIp(serverIp);
         CronJobDTO createdJob = cronJobService.createCronJob(cronJobDTO);
+
+        log.info("Success make cron job list (serverIp: {}, cronJobId: {})", serverIp,
+            cronJobDTO.getId());
+
         return new CronJobResult(createdJob.getId());
     }
 
@@ -50,6 +59,10 @@ public class CronJobController {
         CronJobDTO updateCronJobDTO = cronJobService
             .updateCronJob(UUID.fromString(cronJobId), serverIp, cronJobDTO.getCronName(),
                 cronJobDTO.getCronExpr(), cronJobDTO.getMinStartTime(), cronJobDTO.getMaxEndTime());
+
+        log.info("Success update cron job list (serverIp: {}, cronJobId: {})", serverIp,
+            cronJobDTO.getId());
+
         return new CronJobResult(updateCronJobDTO.getId().toString());
 
     }
@@ -61,8 +74,16 @@ public class CronJobController {
         @PathVariable("cronJobId") @NotEmpty String cronJobId) {
         boolean ret = cronJobService.deleteCronJob(UUID.fromString(cronJobId));
         if (ret) {
+
+            log.info("Success delete cron job list (serverIp: {}, cronJobId: {})", serverIp,
+                cronJobId);
+
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else {
+
+            log.info("Fail delete cron job list (serverIp: {}, cronJobId: {})", serverIp,
+                cronJobId);
+
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }

@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/cron-read-auths/users/{userId}/crons")
+@Log4j2
 @CrossOrigin(origins = "*")
 public class UserCronJobController {
 
@@ -34,6 +36,9 @@ public class UserCronJobController {
 
         List<UserCronJobDTO.Response> allUserCronJob = userCronJobService
             .findAllUserCronJob(userId);
+
+        log.info("Success get user cron job list (userId: {})", userId);
+
         return new ResponseEntity<>(allUserCronJob, HttpStatus.OK);
 
     }
@@ -45,6 +50,9 @@ public class UserCronJobController {
 
         Response response = userCronJobService.addUserCronJob(userId, request);
 
+        log.info("Success make user cron job (userId: {}, cronJobId: {})", userId,
+            request.getCronJobId().toString());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -54,6 +62,9 @@ public class UserCronJobController {
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId) {
 
         userCronJobService.removeUserCronJob(userId, cronJobId);
+
+        log.info("Success delete user cron job (userId: {}, cronJobId: {})", userId,
+            cronJobId.toString());
 
         return new ResponseEntity(HttpStatus.OK);
 

@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/cron-read-auths/teams/{teamId}/crons")
+@Log4j2
 @CrossOrigin(origins = "*")
 public class TeamCronJobController {
 
@@ -34,6 +36,9 @@ public class TeamCronJobController {
 
         List<Response> allTeamCronJob = teamCronJobService
             .findAllTeamCronJob(teamId);
+
+        log.info("Success get team cron job list (teamId: {})", teamId);
+
         return new ResponseEntity<>(allTeamCronJob, HttpStatus.OK);
 
     }
@@ -45,6 +50,9 @@ public class TeamCronJobController {
 
         TeamCronJobDTO.Response response = teamCronJobService.addTeamCronJob(teamId, request);
 
+        log.info("Success make team cron job (teamId: {}, cronJobId: {})", teamId,
+            request.getCronJobId().toString());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -54,6 +62,9 @@ public class TeamCronJobController {
         @ValidUUID @PathVariable(value = "cronJobId") UUID cronJobId) {
 
         teamCronJobService.removeTeamCronJob(teamId, cronJobId);
+
+        log.info("Success delete team cron job (teamId: {}, cronJobId: {})", teamId,
+            cronJobId.toString());
 
         return new ResponseEntity(HttpStatus.OK);
 

@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/cron-servers/{serverIp}/cron-jobs/{cronJobId}/process")
+@Log4j2
 @CrossOrigin(origins = "*")
 public class CronProcessController {
 
@@ -35,6 +37,9 @@ public class CronProcessController {
         @ValidUUID @PathVariable(name = "cronJobId") UUID cronJobId) {
 
         List<Response> allCronProcess = cronProcessService.findAllCronProcess(cronJobId);
+
+        log.info("Success get cron process list (cronJobId: {})", cronJobId.toString());
+
         return new ResponseEntity<>(allCronProcess, HttpStatus.OK);
     }
 
@@ -45,6 +50,10 @@ public class CronProcessController {
         @RequestBody @Valid CronProcessDto.Request request) {
 
         Response cronProcess = cronProcessService.makeCronProcess(cronJobId, request);
+
+        log.info("Success make cron process (cronJobId: {}, pid: {})", cronJobId.toString(),
+            request.getPid());
+
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
     }
 
@@ -55,6 +64,10 @@ public class CronProcessController {
         @NotEmpty @PathVariable(name = "pid") String pid) {
 
         Response cronProcess = cronProcessService.findCronProcess(pid);
+
+        log.info("Success get cron process (cronJobId: {}, pid: {})", cronJobId.toString(),
+            pid);
+
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
     }
 
@@ -66,6 +79,8 @@ public class CronProcessController {
         @Valid @RequestBody CronProcessDto.Request request) {
 
         Response cronProcess = cronProcessService.changeCronProcess(pid, request);
+        log.info("Success update cron process (cronJobId: {}, pid: {})", cronJobId.toString(),
+            request.getPid());
         return new ResponseEntity<>(cronProcess, HttpStatus.OK);
     }
 
@@ -76,6 +91,9 @@ public class CronProcessController {
         @NotEmpty @PathVariable(name = "pid") String pid) {
 
         List<CronLogDto.Response> cronLogs = cronProcessService.findCronLogs(pid);
+
+        log.info("Success get cron logs (cronJobId: {}, pid: {})", cronJobId.toString(),
+            pid);
 
         return new ResponseEntity<>(cronLogs, HttpStatus.OK);
 
