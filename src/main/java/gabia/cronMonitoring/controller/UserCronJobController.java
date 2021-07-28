@@ -40,7 +40,8 @@ public class UserCronJobController {
         List<Response> userCronJobList = userCronJobService
             .findUserCronJobByPage(userId, pageable);
 
-        log.info("Success get user cron job list (userId: {})", userId);
+        log.info("Success get user cron job list (userId: {}, page_num: {})", userId,
+            pageable.getPageNumber());
 
         return new ResponseEntity<>(userCronJobList, HttpStatus.OK);
 

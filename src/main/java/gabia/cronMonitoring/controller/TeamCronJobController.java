@@ -41,7 +41,8 @@ public class TeamCronJobController {
         List<TeamCronJobDTO.Response> teamCronJobList = teamCronJobService
             .findTeamCronJobByPage(teamId, pageable);
 
-        log.info("Success get team cron job list (teamId: {})", teamId);
+        log.info("Success get team cron job list (teamId: {}, page_num: {})", teamId,
+            pageable.getPageNumber());
 
         return new ResponseEntity<>(teamCronJobList, HttpStatus.OK);
 

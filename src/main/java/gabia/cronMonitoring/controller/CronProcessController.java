@@ -45,7 +45,8 @@ public class CronProcessController {
         List<Response> allCronProcess = cronProcessService
             .findCronProcessByPage(cronJobId, pageable);
 
-        log.info("Success get cron process list (cronJobId: {})", cronJobId.toString());
+        log.info("Success get cron process list (cronJobId: {}, page_num: {})",
+            cronJobId.toString(), pageable.getPageNumber());
 
         return new ResponseEntity<>(allCronProcess, HttpStatus.OK);
     }

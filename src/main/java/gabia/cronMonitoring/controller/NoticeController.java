@@ -39,7 +39,8 @@ public class NoticeController {
         List<NoticeSubscriptionDTO.Response> noticeSubscriptionByPage = noticeService
             .findNoticeSubscriptionByPage(userId, pageable);
 
-        log.info("Success get notice subscription list (userId: {})", userId);
+        log.info("Success get notice subscription list (userId: {}, page_num: {})", userId,
+            pageable.getPageNumber());
 
         return new ResponseEntity<>(noticeSubscriptionByPage, HttpStatus.OK);
     }
