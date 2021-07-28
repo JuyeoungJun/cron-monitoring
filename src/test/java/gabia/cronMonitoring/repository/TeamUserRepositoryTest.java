@@ -18,7 +18,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(properties = "spring.profiles.active:common")
+@SpringBootTest(properties = "spring.profiles.active:dev")
 @RunWith(SpringRunner.class)
 @WithMockUser(roles = "USER")
 class TeamUserRepositoryTest {

@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "spring.profiles.active:common")
+@SpringBootTest(properties = "spring.profiles.active:dev")
 @Transactional
 public class TeamCronJobIntegrationTest {
 
