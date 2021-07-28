@@ -40,8 +40,6 @@ public class CronProcessController {
         @PageableDefault(size = 10, sort = "pid")
             Pageable pageable) {
 
-        System.out.println("Page Num: " + pageable.getPageNumber());
-
         List<Response> allCronProcess = cronProcessService
             .findCronProcessByPage(cronJobId, pageable);
 

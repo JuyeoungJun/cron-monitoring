@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -22,11 +23,16 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -47,7 +53,9 @@ public class CronProcessControllerTest {
     @Before
     public void setUpMockMvc() {
         cronProcessController = new CronProcessController(cronProcessService);
-        mvc = standaloneSetup(cronProcessController).build();
+        mvc = standaloneSetup(cronProcessController)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .build();
     }
 
     @Test
@@ -72,7 +80,8 @@ public class CronProcessControllerTest {
 
         //when
         given(cronProcessService
-            .findAllCronProcess(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")))
+            .findCronProcessByPage(eq(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")),
+                Mockito.any(Pageable.class)))
             .willReturn(allResponse);
 
         //then

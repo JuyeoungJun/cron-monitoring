@@ -1,5 +1,6 @@
 package gabia.cronMonitoring.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,9 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -52,6 +57,7 @@ public class TeamCronJobControllerTest {
         teamCronJobController = new TeamCronJobController(teamCronJobService);
         mvc = standaloneSetup(teamCronJobController)
             .setControllerAdvice(controllerExceptionHandler)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
             .build();
     }
 
@@ -73,7 +79,8 @@ public class TeamCronJobControllerTest {
         allResponse.add(testResponse2);
 
         //when
-        given(teamCronJobService.findAllTeamCronJob("test")).willReturn(allResponse);
+        given(teamCronJobService.findTeamCronJobByPage(eq("test"), Mockito.any(Pageable.class)))
+            .willReturn(allResponse);
 
         //then
         mvc.perform(get("/cron-read-auths/teams/{teamId}/crons/", "test"))
