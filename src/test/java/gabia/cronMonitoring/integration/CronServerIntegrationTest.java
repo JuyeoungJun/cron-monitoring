@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @Transactional
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "spring.profiles.active:dev")
+@SpringBootTest(properties = "spring.profiles.active:test")
 public class CronServerIntegrationTest {
 
     @Autowired

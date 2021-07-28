@@ -7,6 +7,11 @@ spring:
   profiles:
     group:
       dev: "dev_env,common"
+---
+spring:
+  profiles:
+    group:
+      test: "test_env,common"
 
 ---
 #운영 환경
@@ -67,6 +72,36 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+server:
+  port: 8081
+---
+#테스트환경
+spring:
+  config:
+    activate:
+      on-profile: "test_env"
+  redis:
+    host: "182.162.142.151"
+    port: "6379"
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
+    username: test
+    password: 1234
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
+    #      #dialect : ////
+    properties:
+      hibernate:
+        #        show_sql: true 얘는 시스템아웃으로 찍는거임.
+        format_sql: true
+    database-platform: H2
 
 server:
   port: 8081

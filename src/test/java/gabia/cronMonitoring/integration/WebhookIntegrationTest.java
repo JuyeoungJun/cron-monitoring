@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(properties = "spring.profiles.active:dev")
+@SpringBootTest(properties = "spring.profiles.active:test")
 @Transactional
 class WebhookIntegrationTest {
 
