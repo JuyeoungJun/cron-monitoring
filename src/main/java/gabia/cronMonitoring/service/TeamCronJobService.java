@@ -2,6 +2,7 @@ package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.dto.TeamCronJobDTO;
 import gabia.cronMonitoring.dto.TeamCronJobDTO.Response;
+import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.Team;
 import gabia.cronMonitoring.entity.TeamCronJob;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,6 +45,25 @@ public class TeamCronJobService {
 
         return responses;
 
+    }
+
+    /**
+     * User Cron Job Page 조회
+     *
+     * @param account
+     * @param pageable
+     * @return List<UserCronJobDTO.Response></UserCronJobDTO.Response>
+     */
+    public List<TeamCronJobDTO.Response> findTeamCronJobByPage(String account, Pageable pageable) {
+
+        // 해당 하는 User의 User Cron Job Page 조회
+        List<TeamCronJobDTO.Response> responses = teamCronJobRepository
+            .findByTeamAccount(account, pageable)
+            .stream()
+            .map(dto -> TeamCronJobDTO.Response.from(dto))
+            .collect(Collectors.toList());
+
+        return responses;
     }
 
     /**
