@@ -14,6 +14,9 @@ spring:
   config:
     activate:
       on-profile: "prod_env"
+  redis:
+    host: "10.7.27.9"
+    port: "6379"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
@@ -51,24 +54,19 @@ spring:
   config:
     activate:
       on-profile: "dev_env"
+  redis:
+    host: "182.162.142.151"
+    port: "6379"
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
-    username: test
-    password: 1234
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
+#    url: ENC(grsR77SEhN7kmgtfZg7KbctEBHpLc/jA4pLSIrBXErbDc66kd0glUpfwR/4j9SK+91evde+5yCycfYe4wlGJq7tFw2vUm80TjNV+qinr1wP5uJqdx77In475nhw/qy2x)
+    username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
+    password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
   jpa:
-    hibernate:
-      ddl-auto: create #creat-drop, update, validate, none가 있음 ;; 교재확인 -> 운영에 create쓰면 안됨 why? drop table되니 데이터 다날라감
-    #      #dialect : ////
     properties:
       hibernate:
-        #        show_sql: true 얘는 시스템아웃으로 찍는거임.
         format_sql: true
-    database-platform: H2
 
 server:
   port: 8081
@@ -78,9 +76,6 @@ spring:
   config:
     activate:
       on-profile: "common"
-  redis:
-    host: "10.7.27.9"
-    port: "6379"
   jasypt:
     password: "cron_monitoring"
     algorithm: "PBEWithMD5AndDES"
