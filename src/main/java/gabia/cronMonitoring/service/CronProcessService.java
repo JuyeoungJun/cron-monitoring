@@ -2,6 +2,7 @@ package gabia.cronMonitoring.service;
 
 import gabia.cronMonitoring.dto.CronLogDto;
 import gabia.cronMonitoring.dto.CronProcessDto;
+import gabia.cronMonitoring.dto.CronProcessDto.Response;
 import gabia.cronMonitoring.entity.CronJob;
 import gabia.cronMonitoring.entity.CronProcess;
 import gabia.cronMonitoring.exception.cron.process.CronJobNotFoundException;
@@ -14,6 +15,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +42,14 @@ public class CronProcessService {
             .collect(Collectors.toList());
 
         return response;
+    }
+
+    public List<CronProcessDto.Response> findCronProcessByPage(UUID cronJobId, Pageable pageable) {
+        List<Response> responses = cronProcessRepository
+            .findAllByCronJob_Id(cronJobId, pageable).stream()
+            .map(dto -> Response.from(dto))
+            .collect(Collectors.toList());
+        return responses;
     }
 
     /**

@@ -11,6 +11,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,9 +36,14 @@ public class CronProcessController {
     @GetMapping(path = "/")
     public ResponseEntity<List<CronProcessDto.Response>> getCronProcessList(
         @PathVariable(name = "serverIp") String serverIp,
-        @ValidUUID @PathVariable(name = "cronJobId") UUID cronJobId) {
+        @ValidUUID @PathVariable(name = "cronJobId") UUID cronJobId,
+        @PageableDefault(size = 10, sort = "pid")
+            Pageable pageable) {
 
-        List<Response> allCronProcess = cronProcessService.findAllCronProcess(cronJobId);
+        System.out.println("Page Num: " + pageable.getPageNumber());
+
+        List<Response> allCronProcess = cronProcessService
+            .findCronProcessByPage(cronJobId, pageable);
 
         log.info("Success get cron process list (cronJobId: {})", cronJobId.toString());
 
