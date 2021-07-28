@@ -11,6 +11,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,14 +33,16 @@ public class NoticeController {
 
     @GetMapping(path = "/notifications/users/{userId}")
     public ResponseEntity<List<NoticeSubscriptionDTO.Response>> getNoticeSubscription(
-        @NotEmpty @PathVariable(value = "userId") String userId) {
+        @NotEmpty @PathVariable(value = "userId") String userId,
+        @PageableDefault(size = 10) Pageable pageable) {
 
-        List<NoticeSubscriptionDTO.Response> allTeamCronJob = noticeService
-            .findAllNoticeSubscription(userId);
+        List<NoticeSubscriptionDTO.Response> noticeSubscriptionByPage = noticeService
+            .findNoticeSubscriptionByPage(userId, pageable);
 
-        log.info("Success get notice subscription list (userId: {})", userId);
+        log.info("Success get notice subscription list (userId: {}, page_num: {})", userId,
+            pageable.getPageNumber());
 
-        return new ResponseEntity<>(allTeamCronJob, HttpStatus.OK);
+        return new ResponseEntity<>(noticeSubscriptionByPage, HttpStatus.OK);
     }
 
     @PostMapping(path = "/notifications/users/{userId}")

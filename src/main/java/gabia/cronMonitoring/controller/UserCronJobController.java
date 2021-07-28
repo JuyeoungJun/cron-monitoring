@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,14 +34,16 @@ public class UserCronJobController {
 
     @GetMapping(path = "/")
     public ResponseEntity<List<UserCronJobDTO.Response>> getUserCronJob(
-        @NotEmpty @PathVariable(value = "userId") String userId) {
+        @NotEmpty @PathVariable(value = "userId") String userId,
+        @PageableDefault(size = 10) Pageable pageable) {
 
-        List<UserCronJobDTO.Response> allUserCronJob = userCronJobService
-            .findAllUserCronJob(userId);
+        List<Response> userCronJobList = userCronJobService
+            .findUserCronJobByPage(userId, pageable);
 
-        log.info("Success get user cron job list (userId: {})", userId);
+        log.info("Success get user cron job list (userId: {}, page_num: {})", userId,
+            pageable.getPageNumber());
 
-        return new ResponseEntity<>(allUserCronJob, HttpStatus.OK);
+        return new ResponseEntity<>(userCronJobList, HttpStatus.OK);
 
     }
 

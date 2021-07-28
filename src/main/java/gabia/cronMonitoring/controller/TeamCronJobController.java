@@ -2,6 +2,7 @@ package gabia.cronMonitoring.controller;
 
 import gabia.cronMonitoring.dto.TeamCronJobDTO;
 import gabia.cronMonitoring.dto.TeamCronJobDTO.Response;
+import gabia.cronMonitoring.dto.UserCronJobDTO;
 import gabia.cronMonitoring.service.TeamCronJobService;
 import gabia.cronMonitoring.util.ValidUUID;
 import java.util.List;
@@ -10,6 +11,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,14 +35,16 @@ public class TeamCronJobController {
 
     @GetMapping(path = "/")
     public ResponseEntity<List<TeamCronJobDTO.Response>> getTeamCronJob(
-        @NotEmpty @PathVariable(value = "teamId") String teamId) {
+        @NotEmpty @PathVariable(value = "teamId") String teamId,
+        @PageableDefault(size = 10) Pageable pageable) {
 
-        List<Response> allTeamCronJob = teamCronJobService
-            .findAllTeamCronJob(teamId);
+        List<TeamCronJobDTO.Response> teamCronJobList = teamCronJobService
+            .findTeamCronJobByPage(teamId, pageable);
 
-        log.info("Success get team cron job list (teamId: {})", teamId);
+        log.info("Success get team cron job list (teamId: {}, page_num: {})", teamId,
+            pageable.getPageNumber());
 
-        return new ResponseEntity<>(allTeamCronJob, HttpStatus.OK);
+        return new ResponseEntity<>(teamCronJobList, HttpStatus.OK);
 
     }
 

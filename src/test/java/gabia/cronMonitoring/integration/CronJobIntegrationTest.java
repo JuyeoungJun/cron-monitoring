@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "spring.profiles.active:common")
+@SpringBootTest(properties = "spring.profiles.active:test")
 @AutoConfigureMockMvc
 @WithMockUser(roles = "USER")
 public class CronJobIntegrationTest {

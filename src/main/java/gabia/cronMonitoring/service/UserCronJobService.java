@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,23 @@ public class UserCronJobService {
 
         return responses;
 
+    }
+
+    /**
+     * User Cron Job Page 조회
+     * @param account
+     * @param pageable
+     * @return List<UserCronJobDTO.Response></UserCronJobDTO.Response>
+     */
+    public List<UserCronJobDTO.Response> findUserCronJobByPage(String account, Pageable pageable) {
+
+        // 해당 하는 User의 User Cron Job Page 조회
+        List<Response> responses = userCronJobRepository.findByUserAccount(account, pageable)
+            .stream()
+            .map(dto -> Response.from(dto))
+            .collect(Collectors.toList());
+
+        return responses;
     }
 
     /**

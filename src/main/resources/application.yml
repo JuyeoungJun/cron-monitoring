@@ -7,6 +7,11 @@ spring:
   profiles:
     group:
       dev: "dev_env,common"
+---
+spring:
+  profiles:
+    group:
+      test: "test_env,common"
 
 ---
 #운영 환경
@@ -14,6 +19,9 @@ spring:
   config:
     activate:
       on-profile: "prod_env"
+  redis:
+    host: "10.7.27.9"
+    port: "6379"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
@@ -51,6 +59,31 @@ spring:
   config:
     activate:
       on-profile: "dev_env"
+  redis:
+    host: "182.162.142.151"
+    port: "6379"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(FT9MAa2OjCi3L4KxLTtuihNe7aaTI+MqU7BqleHlSm37pH/jCsc6kfPLgp0XrR+IhfZvnVMlBz0tsueSbnsMlOC+XgPAUnGAhw8b8BgcqUotG++IpcKRCnqzkJPGp4O3G8CglAb5c18=)
+#    url: ENC(grsR77SEhN7kmgtfZg7KbctEBHpLc/jA4pLSIrBXErbDc66kd0glUpfwR/4j9SK+91evde+5yCycfYe4wlGJq7tFw2vUm80TjNV+qinr1wP5uJqdx77In475nhw/qy2x)
+    username: ENC(vlCqS3V8pcLgDf9i7j4f2Q==)
+    password: ENC(zKcrcC7yhJI4oX1N3yIU6ekob3kkHw+T)
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8081
+---
+#테스트환경
+spring:
+  config:
+    activate:
+      on-profile: "test_env"
+  redis:
+    host: "182.162.142.151"
+    port: "6379"
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1
@@ -78,9 +111,6 @@ spring:
   config:
     activate:
       on-profile: "common"
-  redis:
-    host: "10.7.27.9"
-    port: "6379"
   jasypt:
     password: "cron_monitoring"
     algorithm: "PBEWithMD5AndDES"
