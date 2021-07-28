@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,25 @@ public class NoticeService {
         // 모든 알림 구독 리스트 조회
         List<NoticeSubscriptionDTO.Response> responses = noticeSubscriptionRepository
             .findByRcvUserAccount(account)
+            .stream()
+            .map(dto -> NoticeSubscriptionDTO.Response.from(dto))
+            .collect(Collectors.toList());
+
+        return responses;
+    }
+
+    /**
+     * 해당 유저의 알림 구독 리스트 조회 (Page)
+     * @param account
+     * @param pageable
+     * @return List<NoticeSubscriptionDTO.Response></NoticeSubscriptionDTO.Response>
+     */
+    public List<NoticeSubscriptionDTO.Response> findNoticeSubscriptionByPage(String account,
+        Pageable pageable) {
+
+        // 모든 알림 구독 리스트 조회
+        List<NoticeSubscriptionDTO.Response> responses = noticeSubscriptionRepository
+            .findByRcvUserAccount(account, pageable)
             .stream()
             .map(dto -> NoticeSubscriptionDTO.Response.from(dto))
             .collect(Collectors.toList());
